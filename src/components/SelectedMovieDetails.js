@@ -1,7 +1,8 @@
 import { useEffect, useState } from "react";
-import { KEY } from "./App";
+
 import { Loader, ErrorMessage } from "./Utils";
 import StarRating from "./StarRating";
+import { useKey } from "./customHooks/useKey";
 
 export function SelectedMovieDetails({
   selectedMovieID,
@@ -39,7 +40,7 @@ export function SelectedMovieDetails({
         setErrorMessage("");
         setIsLoading(true);
         const res = await fetch(
-          `http://www.omdbapi.com/?apikey=${KEY}&i=${selectedMovieID}`
+          `http://www.omdbapi.com/?apikey=${process.env.REACT_APP_KEY}&i=${selectedMovieID}`
         );
 
         if (!res.ok) throw new Error("Something went wrong");
@@ -64,16 +65,7 @@ export function SelectedMovieDetails({
     };
   }, [movie.Title]);
 
-  useEffect(() => {
-    const callback = (e) => {
-      if (e.code === "Escape") onBackButton();
-    };
-
-    document.addEventListener("keydown", callback);
-    return () => {
-      document.removeEventListener("keydown", callback);
-    };
-  }, [onBackButton]);
+  useKey("Escape", onBackButton);
 
   return (
     <div className="details">
