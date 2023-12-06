@@ -26,14 +26,12 @@ export function SelectedMovieDetails({
       Poster: movie.Poster,
       imdbRating: Number(movie.imdbRating),
       Runtime: Number(movie.Runtime.split(" ")[0]),
-      userRating
+      userRating,
     };
 
     onSetWatchedMovie(newWatchedMovie);
     onBackButton();
   }
-
-
 
   useEffect(() => {
     async function getMovieDetails() {
@@ -56,6 +54,26 @@ export function SelectedMovieDetails({
     }
     getMovieDetails();
   }, [selectedMovieID]);
+
+  useEffect(() => {
+    if (!movie.Title) return;
+    document.title = movie.Title;
+
+    return () => {
+      document.title = "usePopcorn";
+    };
+  }, [movie.Title]);
+
+  useEffect(() => {
+    const callback = (e) => {
+      if (e.code === "Escape") onBackButton();
+    };
+
+    document.addEventListener("keydown", callback);
+    return () => {
+      document.removeEventListener("keydown", callback);
+    };
+  }, [onBackButton]);
 
   return (
     <div className="details">
